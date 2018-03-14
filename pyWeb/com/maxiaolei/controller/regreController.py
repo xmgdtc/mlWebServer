@@ -3,29 +3,24 @@ from ..models import error
 import json
 import numpy as np
 from ..services import regreService
+from ..config import regerSettings
+defaultAlphas=regerSettings.alphas
+
+
 def regre(request:HttpRequest):
-   # if not request.POST:
-        #return HttpResponse(error.Error(406,'not allow method'))
+    if not request.method=='POST':
+        return HttpResponse(error.Error(406,'http method not allow '))
 
-   # if request.POST:
-        print(request.body)
-        body=json.loads(request.body.decode('utf-8'))
+    body=json.loads(request.body.decode('utf-8'))
+    data=np.array(body['data'])
+    tags=np.array(body['tags'])
+    pData=np.array(body['pdata'])
+    alphas=np.array(body.get('alphas',defaultAlphas))
 
-        print(body)
-        data=body['data']
-        data=np.array(data)
+    regreModel=regreService.Reger()
+    regreModel.data=data
+    regreModel.tags=tags
+    regreModel.fitByRidge(alphas)
+    tag=regreModel.predict(pData)
 
-        tags=body['tags']
-        tags=np.array(tags)
-
-        pData=body['pdata']
-        pData=np.array(pData)
-
-        regreModel=regreService.Reger()
-        regreModel.data=data
-        regreModel.tags=tags
-        regreModel.fitByLinear()
-        tag=regreModel.predict(pData)
-
-    #return HttpResponse(json.dumps(ctx.__dict__))
-        return HttpResponse(tag)
+    return HttpResponse(tag)

@@ -23,5 +23,6 @@ urlpatterns = [
     url(r'^search/', search.search),
     url(r'^searchpost/', searchPost.search_post),
     url(r'^regre/', regreController.regre),
+    url(r'^regre/linear', regreController.regre),
 ]
 
